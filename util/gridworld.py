@@ -2,7 +2,7 @@ import os
 import random
 import tempfile
 
-from enum import Enum, StrEnum
+# from enum import Enum, StrEnum
 from collections import defaultdict
 from dataclasses import dataclass
 from typing import Callable, TypeAlias
@@ -15,7 +15,7 @@ import matplotlib.pyplot as plt
 from matplotlib import colors
 from IPython.display import Image
 
-class Cell(StrEnum):
+class Cell():
     START  = 'S'
     TARGET = 'T'
     EMPTY  = 'E'
@@ -37,7 +37,7 @@ class Grid:
         x, y = key
         return self.cells[self.height - y - 1][x]
 
-class Action(Enum):
+class Action():
     UP    = 1
     RIGHT = 2
     DOWN  = 3

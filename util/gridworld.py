@@ -2,7 +2,6 @@ import os
 import random
 import tempfile
 
-# from enum import Enum, StrEnum
 from collections import defaultdict
 from dataclasses import dataclass
 from typing import Callable, TypeAlias
@@ -28,7 +27,7 @@ class Grid:
     def __init__(self, spec: list[str]):
         self.height = len(spec)
         self.width  = len(spec[0])
-        self.cells  = [[Cell(col) for col in [*row]] for row in spec]
+        self.cells  = [[col for col in [*row]] for row in spec]
 
     def __str__(self) -> str:
         return '\n'.join([' '.join([col.value for col in row]) for row in self.cells]).strip()
@@ -56,9 +55,9 @@ class GridMDP:
         self.grid = grid
         self.start = start
         self.gamma = gamma
-        self.all_actions = list(Action)
+        self.all_actions = [1, 2, 3, 4]
         # Arguably, we could filter out the non-reachable states here - but we keep things simple.
-        self.all_states = [State(x, y) for x in range(0, self.grid.width) 
+        self.all_states = [State(x, y) for x in range(0, self.grid.width)
                            for y in range(0, self.grid.height)]
 
     def is_terminal(self, state: State) -> bool:
@@ -178,7 +177,7 @@ DEFAULT_GRID = Grid([
     'SEEE',
 ])
 GRID_WORLD_MDP = GridMDP(DEFAULT_GRID, gamma=0.9)
-RANDOM_POLICY = lambda _: np.random.choice(list(Action))
+RANDOM_POLICY = lambda _: np.random.choice([1, 2, 3, 4])
 
 # TODO: possibly rename this class. Also action == None means it is terminal...
 # Unclear if this is actually a good-enough implementation for the sake of the examples.
@@ -213,7 +212,7 @@ def simulate_mdp(mdp, policy, max_iterations=20) -> list[Step]:
 #--------------------------
 
 plt.rcParams["animation.html"] = "jshtml"
-plt.rcParams['figure.dpi'] = 100  
+plt.rcParams['figure.dpi'] = 100
 # plt.ion()
 
 CMAP = colors.ListedColormap(['lavender', 'palegreen', 'white', 'gray', 'lightpink', 'limegreen', 'red'])
@@ -234,7 +233,7 @@ def plot_grid(grid, qtable = None, agent_pos: tuple[int, int] = None):
     colors_matrix = np.array([[CELL_VALUES[marker] for marker in row] for row in grid.cells])
     fig, ax = plt.subplots()
     ax.imshow(colors_matrix, cmap=CMAP, norm=NORM)
-    state_value_texts = [[None for _ in range(grid.height)] for _ in range(grid.width)] 
+    state_value_texts = [[None for _ in range(grid.height)] for _ in range(grid.width)]
     if qtable is not None:
         for x in range(grid.width):
             for y in range(grid.height):
@@ -245,7 +244,7 @@ def plot_grid(grid, qtable = None, agent_pos: tuple[int, int] = None):
                 state_value_texts[x][y] = txt
     plt.scatter(0, 2, s=1000, c='white', marker='*')
     agent_marker = None if agent_pos is None else \
-        plt.scatter(agent_pos[0], grid.height - agent_pos[1] -1, s=1000, 
+        plt.scatter(agent_pos[0], grid.height - agent_pos[1] -1, s=1000,
                     c='blue', marker='*', animated=True)
     ax.axes.get_xaxis().set_ticks(np.arange(grid.width) + 0.5)
     ax.axes.get_yaxis().set_ticks(np.arange(grid.height) + 0.5)
@@ -303,7 +302,7 @@ def run_simulation(mdp, policy, max_iterations=20, frames_per_state=10):
 
     # Temporary workaround to avoid:
     #   UserWarning: Animation was deleted without rendering anything.
-    f = os.path.join(tempfile.tempdir, 'rl_animation.gif')
+    f = os.path.join('./', 'rl_animation.gif')
     writergif = animation.PillowWriter(fps=20)
     anim.save(f, writer=writergif)
     plt.close()
